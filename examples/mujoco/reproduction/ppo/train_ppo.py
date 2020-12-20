@@ -78,6 +78,9 @@ def main():
         "--monitor", action="store_true", help="Wrap env with gym.wrappers.Monitor."
     )
     parser.add_argument(
+        "--tb", action="store_true", help="Use TensorBoard logging."
+    )
+    parser.add_argument(
         "--log-interval",
         type=int,
         default=1000,
@@ -248,6 +251,7 @@ def main():
             log_interval=args.log_interval,
             max_episode_len=timestep_limit,
             save_best_so_far_agent=False,
+            use_tensorboard=args.tb
         )
 
 
