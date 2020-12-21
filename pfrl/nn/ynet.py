@@ -35,4 +35,4 @@ class YNet(torch.nn.Module):
         """
         joint_module, heads = self.child_modules[0], self.child_modules[1:]
         joint_in = joint_module(*args, **kwargs)
-        return tuple(mod(*args, **kwargs) for mod in heads)
+        return tuple(mod(joint_in) for mod in heads)
