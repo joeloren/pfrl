@@ -38,8 +38,6 @@ class PCGrad():
         '''
 
         grads, shapes = self._pack_grad(objectives)
-        print(f'DEBUG: grads: {grads}')
-        print(f'DEBUG: shapes: {shapes}')
         pc_grad = self._project_conflicting(grads)
         pc_grad = self._unflatten_grad(pc_grad, shapes[0])
         self._set_grad(pc_grad)
