@@ -25,6 +25,12 @@ class PCGrad():
     def load_state_dict(self, state_dict):
         self._optim.load_state_dict(state_dict)
 
+    def param_groups(self):
+        return self._optim.param_groups
+
+    def load_param_groups(self, param_groups):
+        self._optim.load_param_groups(param_groups)
+
     def zero_grad(self):
         return self._optim.zero_grad()
 
