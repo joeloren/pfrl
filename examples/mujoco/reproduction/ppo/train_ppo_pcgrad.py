@@ -9,7 +9,7 @@ import functools
 import gym
 import gym.spaces
 import numpy as np
-from pcgrad import PCGrad
+
 import pybulletgym
 import torch
 from torch import nn
@@ -17,6 +17,7 @@ from torch import nn
 import pfrl
 from pfrl import experiments, utils
 from pfrl.agents import PPO
+from pfrl.optimizers.pcgrad import PCGrad
 
 
 def main():
