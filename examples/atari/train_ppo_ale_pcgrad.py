@@ -156,6 +156,10 @@ def main():
         default=None,
         help="Frequency at which agents are stored.",
     )
+    parser.add_argument(
+        "--tb", action="store_true", help="Use TensorBoard logging."
+    )
+
     args = parser.parse_args()
 
     import logging
@@ -327,6 +331,7 @@ def main():
             log_interval=args.log_interval,
             save_best_so_far_agent=False,
             step_hooks=step_hooks,
+            use_tensorboard=args.tb
         )
 
 
