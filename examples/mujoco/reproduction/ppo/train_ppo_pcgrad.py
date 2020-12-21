@@ -204,7 +204,7 @@ def main():
     ortho_init(joint_module[0], gain=1)
     ortho_init(joint_module[2], gain=1)
     ortho_init(policy_head[0], gain=1e-2)
-    ortho_init(vf_head[0], gain=1)
+    ortho_init(vf_head, gain=1)
 
     # Combine a policy and a value function into a single model
     model = pfrl.nn.YNet(joint_module, policy_head, vf_head)
