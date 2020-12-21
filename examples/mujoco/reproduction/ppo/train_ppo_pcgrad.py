@@ -155,11 +155,34 @@ def main():
 
     obs_size = obs_space.low.size
     action_size = action_space.low.size
-    policy = torch.nn.Sequential(
+    # policy = torch.nn.Sequential(
+    #     nn.Linear(obs_size, 64),
+    #     nn.Tanh(),
+    #     nn.Linear(64, 64),
+    #     nn.Tanh(),
+    #     nn.Linear(64, action_size),
+    #     pfrl.policies.GaussianHeadWithStateIndependentCovariance(
+    #         action_size=action_size,
+    #         var_type="diagonal",
+    #         var_func=lambda x: torch.exp(2 * x),  # Parameterize log std
+    #         var_param_init=0,  # log std = 0 => std = 1
+    #     ),
+    # )
+    #
+    # vf = torch.nn.Sequential(
+    #     nn.Linear(obs_size, 64),
+    #     nn.Tanh(),
+    #     nn.Linear(64, 64),
+    #     nn.Tanh(),
+    #     nn.Linear(64, 1),
+    # )
+    joint_module = torch.nn.Sequential(
         nn.Linear(obs_size, 64),
         nn.Tanh(),
         nn.Linear(64, 64),
-        nn.Tanh(),
+        nn.Tanh())
+
+    policy_head = torch.nn.Sequential(
         nn.Linear(64, action_size),
         pfrl.policies.GaussianHeadWithStateIndependentCovariance(
             action_size=action_size,
@@ -169,13 +192,7 @@ def main():
         ),
     )
 
-    vf = torch.nn.Sequential(
-        nn.Linear(obs_size, 64),
-        nn.Tanh(),
-        nn.Linear(64, 64),
-        nn.Tanh(),
-        nn.Linear(64, 1),
-    )
+    vf_head = nn.Linear(64, 1)
 
     # While the original paper initialized weights by normal distribution,
     # we use orthogonal initialization as the latest openai/baselines does.
@@ -183,15 +200,13 @@ def main():
         nn.init.orthogonal_(layer.weight, gain=gain)
         nn.init.zeros_(layer.bias)
 
-    ortho_init(policy[0], gain=1)
-    ortho_init(policy[2], gain=1)
-    ortho_init(policy[4], gain=1e-2)
-    ortho_init(vf[0], gain=1)
-    ortho_init(vf[2], gain=1)
-    ortho_init(vf[4], gain=1)
+    ortho_init(joint_module[0], gain=1)
+    ortho_init(joint_module[2], gain=1)
+    ortho_init(policy_head[0], gain=1e-2)
+    ortho_init(vf_head[0], gain=1)
 
     # Combine a policy and a value function into a single model
-    model = pfrl.nn.Branched(policy, vf)
+    model = pfrl.nn.YNet(joint_module, policy_head, vf_head)
 
     # opt = torch.optim.Adam(model.parameters(), lr=3e-4, eps=1e-5)
     opt = PCGrad(torch.optim.Adam(model.parameters(), lr=3e-4, eps=1e-5))
