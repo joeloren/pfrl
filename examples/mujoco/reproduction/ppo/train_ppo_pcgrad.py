@@ -16,7 +16,7 @@ from torch import nn
 
 import pfrl
 from pfrl import experiments, utils
-from pfrl.agents import PPO
+from pfrl.agents import PPOPCGrad
 from pfrl.optimizers.pcgrad import PCGrad
 
 
@@ -212,7 +212,7 @@ def main():
     # opt = torch.optim.Adam(model.parameters(), lr=3e-4, eps=1e-5)
     opt = PCGrad(torch.optim.Adam(model.parameters(), lr=3e-4, eps=1e-5))
 
-    agent = PPO(
+    agent = PPOPCGrad(
         model,
         opt,
         obs_normalizer=obs_normalizer,
