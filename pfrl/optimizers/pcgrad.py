@@ -9,6 +9,7 @@ import random
 
 ## Taken from: https://github.com/WeiChengTseng/Pytorch-PCGrad
 
+
 class PCGrad():
     def __init__(self, optimizer):
         self._optim = optimizer
@@ -17,6 +18,12 @@ class PCGrad():
     @property
     def optimizer(self):
         return self._optim
+
+    def state_dict(self):
+        return self._optim.state_dict()
+
+    def load_state_dict(self, state_dict):
+        self._optim.load_state_dict(state_dict)
 
     def zero_grad(self):
         return self._optim.zero_grad()
