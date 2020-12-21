@@ -643,9 +643,9 @@ class PPOPCGrad(agent.AttributeSavingMixin, agent.BatchAgent):
         self.policy_loss_record.append(float(loss_policy))
 
         losses = [
-            loss_policy,
-            self.value_func_coef * loss_value_func,
-            self.entropy_coef * loss_entropy
+            loss_policy + 0 * loss_value_func + 0 * loss_entropy,
+            self.value_func_coef * loss_value_func + 0 * loss_policy + 0 * loss_entropy,
+            self.entropy_coef * loss_entropy + 0*loss_policy + 0 * loss_value_func
         ]
 
         return losses
