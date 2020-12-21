@@ -209,8 +209,8 @@ def main():
     # Combine a policy and a value function into a single model
     model = pfrl.nn.YNet(joint_module, policy_head, vf_head)
 
-    opt = torch.optim.Adam(model.parameters(), lr=3e-4, eps=1e-5)
-    #opt = PCGrad(torch.optim.Adam(model.parameters(), lr=3e-4, eps=1e-5))
+    # opt = torch.optim.Adam(model.parameters(), lr=3e-4, eps=1e-5)
+    opt = PCGrad(torch.optim.Adam(model.parameters(), lr=3e-4, eps=1e-5))
 
     agent = PPO(
         model,

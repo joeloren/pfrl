@@ -18,7 +18,7 @@ from pfrl.utils.recurrent import (
     one_step_forward,
     pack_and_forward,
 )
-
+from pfrl.optimizers.pcgrad import PCGrad
 
 def _mean_or_nan(xs):
     """Return its mean a non-empty sequence, numpy.nan for a empty one."""
@@ -245,7 +245,7 @@ def _yield_minibatches(dataset, minibatch_size, num_epochs):
         buf = buf[:-minibatch_size]
 
 
-class PPO(agent.AttributeSavingMixin, agent.BatchAgent):
+class PPOPCGrad(agent.AttributeSavingMixin, agent.BatchAgent):
     """Proximal Policy Optimization
 
     See https://arxiv.org/abs/1707.06347
@@ -308,7 +308,7 @@ class PPO(agent.AttributeSavingMixin, agent.BatchAgent):
     def __init__(
         self,
         model,
-        optimizer,
+        optimizer: PCGrad,
         obs_normalizer=None,
         gpu=None,
         gamma=0.99,
@@ -496,7 +496,7 @@ class PPO(agent.AttributeSavingMixin, agent.BatchAgent):
             vs_teacher = vs_teacher[..., None]
 
             self.model.zero_grad()
-            loss = self._lossfun(
+            losses = self._lossfun(
                 distribs.entropy(),
                 vs_pred,
                 distribs.log_prob(actions),
@@ -505,7 +505,8 @@ class PPO(agent.AttributeSavingMixin, agent.BatchAgent):
                 advs=advs,
                 vs_teacher=vs_teacher,
             )
-            loss.backward()
+            #loss.backward()
+            self.optimizer.pc_backward(losses)
             if self.max_grad_norm is not None:
                 torch.nn.utils.clip_grad_norm_(
                     self.model.parameters(), self.max_grad_norm
@@ -641,13 +642,13 @@ class PPO(agent.AttributeSavingMixin, agent.BatchAgent):
         self.value_loss_record.append(float(loss_value_func))
         self.policy_loss_record.append(float(loss_policy))
 
-        loss = (
-            loss_policy
-            + self.value_func_coef * loss_value_func
-            + self.entropy_coef * loss_entropy
-        )
+        losses = [
+            loss_policy,
+            self.value_func_coef * loss_value_func,
+            self.entropy_coef * loss_entropy
+        ]
 
-        return loss
+        return losses
 
     def batch_act(self, batch_obs):
         if self.training:
