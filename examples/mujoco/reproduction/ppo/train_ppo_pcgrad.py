@@ -221,7 +221,8 @@ def main():
         minibatch_size=args.batch_size,
         epochs=args.epochs,
         clip_eps_vf=None,
-        entropy_coef=0,
+        # change the coeff back to 0 afterwards
+        entropy_coef=1e-2,
         standardize_advantages=True,
         gamma=0.995,
         lambd=0.97,
