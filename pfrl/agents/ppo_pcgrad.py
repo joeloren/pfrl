@@ -642,10 +642,16 @@ class PPOPCGrad(agent.AttributeSavingMixin, agent.BatchAgent):
         self.value_loss_record.append(float(loss_value_func))
         self.policy_loss_record.append(float(loss_policy))
 
+        # losses = [
+        #     loss_policy + 0 * loss_value_func + 0 * loss_entropy,
+        #     self.value_func_coef * loss_value_func + 0 * loss_policy + 0 * loss_entropy,
+        #     self.entropy_coef * loss_entropy + 0*loss_policy + 0 * loss_value_func
+        # ]
+
+        # TODO: DEBUG!! Change this back when done
         losses = [
-            loss_policy + 0 * loss_value_func + 0 * loss_entropy,
+            loss_policy + 0 * loss_value_func + self.entropy_coef * loss_entropy,
             self.value_func_coef * loss_value_func + 0 * loss_policy + 0 * loss_entropy,
-            self.entropy_coef * loss_entropy + 0*loss_policy + 0 * loss_value_func
         ]
 
         return losses
