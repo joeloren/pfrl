@@ -650,8 +650,8 @@ class PPOPCGrad(agent.AttributeSavingMixin, agent.BatchAgent):
 
         # TODO: DEBUG!! Change this back when done
         losses = [
-            loss_policy + 0 * loss_value_func + self.entropy_coef * loss_entropy,
             self.value_func_coef * loss_value_func + 0 * loss_policy + 0 * loss_entropy,
+            loss_policy + 0 * loss_value_func + self.entropy_coef * loss_entropy
         ]
 
         return losses

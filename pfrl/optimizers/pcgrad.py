@@ -53,7 +53,7 @@ class PCGrad():
     def _project_conflicting(self, grads, shapes=None):
         pc_grad, num_task = copy.deepcopy(grads), len(grads)
         for g_i in pc_grad:
-            random.shuffle(grads)
+            # random.shuffle(grads)
             for g_j in grads:
                 g_i_g_j = torch.dot(g_i, g_j)
                 if g_i_g_j < 0:
