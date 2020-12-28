@@ -58,7 +58,7 @@ class PCGrad():
                 g_i_g_j = torch.dot(g_i, g_j)
                 if g_i_g_j < 0:
                     g_i -= (g_i_g_j) * g_j / (g_j.norm()**2)
-        pc_grad = torch.stack(pc_grad).mean(dim=0)
+        pc_grad = torch.stack(pc_grad).sum(dim=0)
         return pc_grad
 
     def _set_grad(self, grads):
