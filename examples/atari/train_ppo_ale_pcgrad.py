@@ -16,9 +16,10 @@ from torch import nn
 
 import pfrl
 from pfrl import experiments, utils
-from pfrl.agents import PPO
+from pfrl.agents import PPOPCGrad
 from pfrl.policies import SoftmaxCategoricalHead
 from pfrl.wrappers import atari_wrappers
+from pfrl.optimizers.pcgrad import PCGrad
 
 
 def main():
@@ -158,6 +159,7 @@ def main():
     parser.add_argument(
         "--tb", action="store_true", help="Use TensorBoard logging."
     )
+
     args = parser.parse_args()
 
     import logging
@@ -265,13 +267,13 @@ def main():
             ),
         )
 
-    opt = torch.optim.Adam(model.parameters(), lr=args.lr, eps=1e-5)
+    opt = PCGrad(torch.optim.Adam(model.parameters(), lr=args.lr, eps=1e-5))
 
     def phi(x):
         # Feature extractor
         return np.asarray(x, dtype=np.float32) / 255
 
-    agent = PPO(
+    agent = PPOPCGrad(
         model,
         opt,
         gpu=args.gpu,
